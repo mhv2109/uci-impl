@@ -32,8 +32,14 @@ clean:
 	$(GOCLEAN)
 	rm -f $(RANDOM_OUTPUT)
 
+.PHONY: build-mocks
+build-mocks:
+	@echo " > Building mocks..."
+	mockgen -source=internal/solver/solver.go -destination=internal/solver/mock/solver.go -package=mock
+	mockgen -source=internal/handler/output.go -destination=internal/handler/mock/output.go -package=mock
+
 .PHONY: test
-test:
+test: build-mocks
 	@echo "  >  Running tests..."
 	$(GOTEST) -v ./...
 

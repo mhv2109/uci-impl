@@ -8,20 +8,37 @@ import (
 	"uci-impl/internal/solver"
 )
 
-func emitID() {
+type Emitter interface {
+	EmitID()
+	EmitUCIOK()
+	EmitReadyOK()
+	EmitBestmove(moves ...string)
+	EmitCopyProtection()
+	EmitRegistration()
+	EmitInfo(i info.Info)
+	EmitOption(s solver.Solver)
+}
+
+type EmitterImpl struct{}
+
+func NewEmitter() Emitter {
+	return &EmitterImpl{}
+}
+
+func (e *EmitterImpl) EmitID() {
 	fmt.Println("id name mhv2109-engine")
 	fmt.Println("id author mhv2109")
 }
 
-func emitUCIOK() {
+func (e *EmitterImpl) EmitUCIOK() {
 	fmt.Println("uciok")
 }
 
-func emitReadyOK() {
+func (e *EmitterImpl) EmitReadyOK() {
 	fmt.Println("readyok")
 }
 
-func emitBestmove(moves ...string) {
+func (e *EmitterImpl) EmitBestmove(moves ...string) {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("bestmove %s", moves[0]))
 
@@ -32,15 +49,15 @@ func emitBestmove(moves ...string) {
 	fmt.Println(builder.String())
 }
 
-func emitCopyprotection() {
+func (e *EmitterImpl) EmitCopyProtection() {
 	panic("Not Implemented!")
 }
 
-func emitRegistration() {
+func (e *EmitterImpl) EmitRegistration() {
 	panic("Not Implemented!")
 }
 
-func emitInfo(i info.Info) {
+func (e *EmitterImpl) EmitInfo(i info.Info) {
 	iStr := i.String()
 
 	// don't print empty info
@@ -49,7 +66,7 @@ func emitInfo(i info.Info) {
 	}
 }
 
-func emitOption(s solver.Solver) {
+func (e *EmitterImpl) EmitOption(s solver.Solver) {
 	for _, o := range s.GetOptions() {
 		fmt.Println(o)
 	}

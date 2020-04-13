@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -15,12 +14,18 @@ type UCIInputHandler struct {
 	name, code       string
 	isReadyWaitGroup *sync.WaitGroup
 	solver           solver.Solver
+	emitter          Emitter
 }
 
 func NewHandler(s solver.Solver) *UCIInputHandler {
+	return NewHandlerWithEmitter(s, NewEmitter())
+}
+
+func NewHandlerWithEmitter(s solver.Solver, e Emitter) *UCIInputHandler {
 	return &UCIInputHandler{
 		isReadyWaitGroup: &sync.WaitGroup{},
-		solver:           s}
+		solver:           s,
+		emitter:          e}
 }
 
 func (handler *UCIInputHandler) Handle(input []string) {
@@ -57,8 +62,9 @@ func (handler *UCIInputHandler) Handle(input []string) {
 		handler.handleQuit(input)
 	default:
 		// invalid input, do nothing and return (TODO: setup logger)
-		return
 	}
+
+	handler.isReadyWaitGroup.Done()
 }
 
 /*
@@ -66,9 +72,9 @@ Handler (input) methods
 */
 
 func (handler *UCIInputHandler) handleUci(input []string) {
-	emitID()
-	emitOption(handler.solver)
-	emitUCIOK()
+	handler.emitter.EmitID()
+	handler.emitter.EmitOption(handler.solver)
+	handler.emitter.EmitUCIOK()
 }
 
 func (handler *UCIInputHandler) handleDebug(input []string) {
@@ -92,7 +98,7 @@ func (handler *UCIInputHandler) handleIsReady(input []string) {
 	// Wait for other threads to finish
 	handler.isReadyWaitGroup.Wait()
 
-	fmt.Println("readyok")
+	handler.emitter.EmitReadyOK()
 
 	// Add counter to wg to handle IsReadyWaitGroup.Done() in calling function
 	handler.isReadyWaitGroup.Add(1)
@@ -115,9 +121,9 @@ func (handler *UCIInputHandler) handleSetOption(input []string) {
 	var valueSlice []string
 	var nameSlice []string
 	if vi == -1 {
-		nameSlice = input[1:]
+		nameSlice = input[2:]
 	} else {
-		nameSlice = input[1:vi]
+		nameSlice = input[2:vi]
 		valueSlice = input[vi+1:]
 	}
 	name := strings.ToLower(strings.Join(nameSlice, " "))
@@ -198,7 +204,7 @@ func (handler *UCIInputHandler) handlePosition(input []string) {
 
 	// get moves
 	var moves []string
-	for i, v := range input[1:] {
+	for i, v := range input {
 		if v == "moves" {
 			moves = make([]string, len(input)-i-1)
 			for j, move := range input[i+1:] {
@@ -228,7 +234,7 @@ func (handler *UCIInputHandler) handleGo(input []string) {
 	sp := solver.NewSearchParams()
 
 	var searchmoves []string
-	for i, v := range input[1:] {
+	for i, v := range input {
 		switch v {
 		case "searchmoves":
 			searchmoves = make([]string, len(input)-i-1)
@@ -286,7 +292,7 @@ func (handler *UCIInputHandler) handleGo(input []string) {
 
 		// in event of "pondermiss", result will be nil
 		if result != nil {
-			emitBestmove(result...)
+			handler.emitter.EmitBestmove(result...)
 		}
 	}()
 }
