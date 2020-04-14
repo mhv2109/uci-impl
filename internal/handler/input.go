@@ -11,7 +11,6 @@ import (
 )
 
 type UCIInputHandler struct {
-	name, code       string
 	isReadyWaitGroup *sync.WaitGroup
 	solver           solver.Solver
 	emitter          Emitter
@@ -75,6 +74,13 @@ func (handler *UCIInputHandler) handleUci(input []string) {
 	handler.emitter.EmitID()
 	handler.emitter.EmitOption(handler.solver)
 	handler.emitter.EmitUCIOK()
+	handler.checkCopyprotection()
+}
+
+func (handler *UCIInputHandler) checkCopyprotection() {
+	// no copyprotection implemented
+	handler.emitter.EmitCopyProtectionChecking()
+	handler.emitter.EmitCopyProtectionOk()
 }
 
 func (handler *UCIInputHandler) handleDebug(input []string) {
@@ -138,57 +144,12 @@ func (handler *UCIInputHandler) handleSetOption(input []string) {
 }
 
 func (handler *UCIInputHandler) handleRegister(input []string) {
-	if len(input) < 2 {
-		// invalid input, do nothing and return (TODO: setup logger)
+	if len(input) < 2 || input[1] == "later" {
 		return
 	}
-
-	if input[1] == "later" {
-		// don't register engine now
-		return
-	}
-
-	ni, nj := -1, -1
-	for i, arg := range input {
-		if arg == "name" {
-			ni = i
-			break
-		}
-	}
-	if ni != -1 {
-		for j, arg := range input[ni+1:] {
-			if arg == "code" {
-				break
-			}
-			nj = j
-		}
-	}
-
-	ci, cj := -1, -1
-	for i, arg := range input {
-		if arg == "code" {
-			ci = i
-			break
-		}
-	}
-	if ci != -1 {
-		for j, arg := range input[ci+1:] {
-			if arg == "name" {
-				break
-			}
-			cj = j
-		}
-	}
-
-	// set name
-	if ni != -1 {
-		handler.name = strings.Join(input[ni:nj+1], " ")
-	}
-
-	// set code
-	if ci != -1 {
-		handler.code = strings.Join(input[ci:cj+1], " ")
-	}
+	// don't implement any form of registration checking
+	handler.emitter.EmitRegistrationChecking()
+	handler.emitter.EmitRegistrationOk()
 }
 
 func (handler *UCIInputHandler) handleUcinewgame(input []string) {

@@ -86,28 +86,76 @@ func (mr *MockEmitterMockRecorder) EmitBestmove(moves ...interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitBestmove", reflect.TypeOf((*MockEmitter)(nil).EmitBestmove), moves...)
 }
 
-// EmitCopyProtection mocks base method
-func (m *MockEmitter) EmitCopyProtection() {
+// EmitCopyProtectionChecking mocks base method
+func (m *MockEmitter) EmitCopyProtectionChecking() {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "EmitCopyProtection")
+	m.ctrl.Call(m, "EmitCopyProtectionChecking")
 }
 
-// EmitCopyProtection indicates an expected call of EmitCopyProtection
-func (mr *MockEmitterMockRecorder) EmitCopyProtection() *gomock.Call {
+// EmitCopyProtectionChecking indicates an expected call of EmitCopyProtectionChecking
+func (mr *MockEmitterMockRecorder) EmitCopyProtectionChecking() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitCopyProtection", reflect.TypeOf((*MockEmitter)(nil).EmitCopyProtection))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitCopyProtectionChecking", reflect.TypeOf((*MockEmitter)(nil).EmitCopyProtectionChecking))
 }
 
-// EmitRegistration mocks base method
-func (m *MockEmitter) EmitRegistration() {
+// EmitCopyProtectionOk mocks base method
+func (m *MockEmitter) EmitCopyProtectionOk() {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "EmitRegistration")
+	m.ctrl.Call(m, "EmitCopyProtectionOk")
 }
 
-// EmitRegistration indicates an expected call of EmitRegistration
-func (mr *MockEmitterMockRecorder) EmitRegistration() *gomock.Call {
+// EmitCopyProtectionOk indicates an expected call of EmitCopyProtectionOk
+func (mr *MockEmitterMockRecorder) EmitCopyProtectionOk() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitRegistration", reflect.TypeOf((*MockEmitter)(nil).EmitRegistration))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitCopyProtectionOk", reflect.TypeOf((*MockEmitter)(nil).EmitCopyProtectionOk))
+}
+
+// EmitCopyProtectionError mocks base method
+func (m *MockEmitter) EmitCopyProtectionError() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "EmitCopyProtectionError")
+}
+
+// EmitCopyProtectionError indicates an expected call of EmitCopyProtectionError
+func (mr *MockEmitterMockRecorder) EmitCopyProtectionError() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitCopyProtectionError", reflect.TypeOf((*MockEmitter)(nil).EmitCopyProtectionError))
+}
+
+// EmitRegistrationChecking mocks base method
+func (m *MockEmitter) EmitRegistrationChecking() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "EmitRegistrationChecking")
+}
+
+// EmitRegistrationChecking indicates an expected call of EmitRegistrationChecking
+func (mr *MockEmitterMockRecorder) EmitRegistrationChecking() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitRegistrationChecking", reflect.TypeOf((*MockEmitter)(nil).EmitRegistrationChecking))
+}
+
+// EmitRegistrationOk mocks base method
+func (m *MockEmitter) EmitRegistrationOk() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "EmitRegistrationOk")
+}
+
+// EmitRegistrationOk indicates an expected call of EmitRegistrationOk
+func (mr *MockEmitterMockRecorder) EmitRegistrationOk() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitRegistrationOk", reflect.TypeOf((*MockEmitter)(nil).EmitRegistrationOk))
+}
+
+// EmitRegistrationError mocks base method
+func (m *MockEmitter) EmitRegistrationError() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "EmitRegistrationError")
+}
+
+// EmitRegistrationError indicates an expected call of EmitRegistrationError
+func (mr *MockEmitterMockRecorder) EmitRegistrationError() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmitRegistrationError", reflect.TypeOf((*MockEmitter)(nil).EmitRegistrationError))
 }
 
 // EmitInfo mocks base method

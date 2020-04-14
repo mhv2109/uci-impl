@@ -13,8 +13,12 @@ type Emitter interface {
 	EmitUCIOK()
 	EmitReadyOK()
 	EmitBestmove(moves ...string)
-	EmitCopyProtection()
-	EmitRegistration()
+	EmitCopyProtectionChecking()
+	EmitCopyProtectionOk()
+	EmitCopyProtectionError()
+	EmitRegistrationChecking()
+	EmitRegistrationOk()
+	EmitRegistrationError()
 	EmitInfo(i info.Info)
 	EmitOption(s solver.Solver)
 }
@@ -49,12 +53,28 @@ func (e *EmitterImpl) EmitBestmove(moves ...string) {
 	fmt.Println(builder.String())
 }
 
-func (e *EmitterImpl) EmitCopyProtection() {
-	panic("Not Implemented!")
+func (e *EmitterImpl) EmitCopyProtectionChecking() {
+	fmt.Println("copyprotection checking")
 }
 
-func (e *EmitterImpl) EmitRegistration() {
-	panic("Not Implemented!")
+func (e *EmitterImpl) EmitCopyProtectionOk() {
+	fmt.Println("copyprotection ok")
+}
+
+func (e *EmitterImpl) EmitCopyProtectionError() {
+	fmt.Println("copyprotection error")
+}
+
+func (e *EmitterImpl) EmitRegistrationChecking() {
+	fmt.Println("registration checking")
+}
+
+func (e *EmitterImpl) EmitRegistrationOk() {
+	fmt.Println("registration ok")
+}
+
+func (e *EmitterImpl) EmitRegistrationError() {
+	fmt.Println("registration error")
 }
 
 func (e *EmitterImpl) EmitInfo(i info.Info) {
