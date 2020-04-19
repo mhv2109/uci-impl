@@ -41,7 +41,7 @@ build-mocks:
 .PHONY: test
 test: build-mocks
 	@echo "  >  Running tests..."
-	$(GOTEST) -v ./...
+	$(GOTEST) -v -race ./...
 
 .PHONY: install
 install:

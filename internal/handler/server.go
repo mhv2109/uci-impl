@@ -24,7 +24,7 @@ func (server *Server) ServeForever() {
 
 	for {
 		text, _ := reader.ReadString('\n')
-		go server.process(text)
+		server.process(text)
 	}
 }
 
