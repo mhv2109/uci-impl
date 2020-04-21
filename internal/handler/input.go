@@ -4,16 +4,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 
 	"uci-impl/internal/config"
 	"uci-impl/internal/solver"
 )
 
 type UCIInputHandler struct {
-	isReadyWaitGroup *sync.WaitGroup
-	solver           solver.Solver
-	emitter          Emitter
+	solver  solver.Solver
+	emitter Emitter
 }
 
 func NewHandler(s solver.Solver) *UCIInputHandler {
@@ -22,9 +20,8 @@ func NewHandler(s solver.Solver) *UCIInputHandler {
 
 func NewHandlerWithEmitter(s solver.Solver, e Emitter) *UCIInputHandler {
 	return &UCIInputHandler{
-		isReadyWaitGroup: &sync.WaitGroup{},
-		solver:           s,
-		emitter:          e}
+		solver:  s,
+		emitter: e}
 }
 
 func (handler *UCIInputHandler) Handle(input []string) {
@@ -32,9 +29,6 @@ func (handler *UCIInputHandler) Handle(input []string) {
 	if len(input) < 1 {
 		return
 	}
-
-	// register goroutine
-	handler.isReadyWaitGroup.Add(1)
 
 	switch input[0] {
 	case "uci":
@@ -63,7 +57,6 @@ func (handler *UCIInputHandler) Handle(input []string) {
 		// invalid input, do nothing and return (TODO: setup logger)
 	}
 
-	handler.isReadyWaitGroup.Done()
 }
 
 /*
@@ -99,15 +92,7 @@ func (handler *UCIInputHandler) handleDebug(input []string) {
 }
 
 func (handler *UCIInputHandler) handleIsReady(input []string) {
-	// Don't wait for this goroutine
-	handler.isReadyWaitGroup.Add(-1)
-	// Wait for other threads to finish
-	handler.isReadyWaitGroup.Wait()
-
 	handler.emitter.EmitReadyOK()
-
-	// Add counter to wg to handle IsReadyWaitGroup.Done() in calling function
-	handler.isReadyWaitGroup.Add(1)
 }
 
 func (handler *UCIInputHandler) handleSetOption(input []string) {
