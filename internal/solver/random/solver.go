@@ -59,7 +59,7 @@ func (solver *RandomSolver) SetStartPosition(moves ...string) {
 
 func (solver *RandomSolver) DoMove(move string) {
 	if err := solver.game.MoveStr(move); err != nil {
-		panic("Invalid move: " + move)
+		log.Panicln("Invalid move: " + move)
 	}
 }
 
