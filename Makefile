@@ -21,7 +21,7 @@ build: build-random
 
 .PHONY: build-random
 RANDOM_CMD=$(CMDDIR)/random/main.go
-RANDOM_OUTPUT=$(OUTPUTDIR)/uci-impl-random
+RANDOM_OUTPUT=$(OUTPUTDIR)/mhv2109-uci-random
 build-random:
 	@echo "  >  Building Random solver..."
 	$(GOBUILD) -i -o $(RANDOM_OUTPUT) $(RANDOM_CMD)
