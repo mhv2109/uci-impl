@@ -10,7 +10,7 @@ func availableOptions() []*solver.Option {
 	UCI_EngineAboutOption := &solver.Option{
 		Name:    "UCI_EngineAboutOption",
 		Type:    solver.OptionStringType,
-		Default: "A UCI Chess engine written in Go by mhv2109"}
+		Default: "A UCI Chess engine, written in Go by mhv2109, that chooses a valid move at random"}
 
 	options[0] = UCI_EngineAboutOption
 

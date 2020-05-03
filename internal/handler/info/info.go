@@ -5,14 +5,32 @@ import (
 	"strings"
 )
 
+// Info is a struct that holds data to be sent to the GUI.
 type Info struct {
-	depth, seldepth, time, nodes, currmovenumber, hashfull, nps, tbhits,
-	sbhits, cpuload *uint
-	pv         []string
-	score      *score
-	currmove   *string
+	depth *uint // search depth in plies
+	// selective search depth in plies,
+	// if the engine sends seldepth there must also be a "depth" present in the same string.
+	seldepth       *uint
+	time           *uint    // the time searched in ms, this should be sent together with the pv.
+	nodes          *uint    // x nodes searched, the engine should send this info regularly
+	currmovenumber *uint    // currently searching move number x, for the first move x should be 1 not 0.
+	hashfull       *uint    // the hash is x permill full, the engine should send this info regularly
+	nps            *uint    // x nodes per second searched, the engine should send this info regularl
+	tbhits         *uint    // x positions where found in the endgame table bases
+	sbhits         *uint    // x positions where found in the shredder endgame databases
+	cpuload        *uint    // the cpu usage of the engine is x permill.
+	pv             []string // the best line found
+	score          *score
+	currmove       *string // currently searching this move
+	// move <move1> is refuted by the line <move2> ... <movei>, i can be any number >= 1.
+	// Example: after move d1h5 is searched, the engine can send
+	// "info refutation d1h5 g6h5"
+	// if g6h5 is the best answer after d1h5 or if g6h5 refutes the move d1h5.
+	// if there is no refutation for d1h5 found, the engine should just send
+	// "info refutation d1h5"
+	//   The engine should only send this if the option "UCI_ShowRefutations" is set to true.
 	refutation []string
-	currline   *currline
+	currline   *currline // this is the current line the engine is calculating.
 }
 
 func NewInfo() *Info {

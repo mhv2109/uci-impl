@@ -1,12 +1,13 @@
 package info
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 )
 
+// currline is the current line the engine is calculating.
 type currline struct {
-	cpunr uint
+	cpunr uint // the number of the cpu if the engine is running on more than one cpu
 	moves []string
 }
 

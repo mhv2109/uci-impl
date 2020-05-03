@@ -8,14 +8,14 @@ import (
 	"uci-impl/internal/solver"
 )
 
+// Server continuously reads from stdin and submits commands to the Handler.
 type Server struct {
-	debug   bool
 	handler *UCIInputHandler
 }
 
-func NewServer(debug bool, s solver.Solver) *Server {
+// NewServer returns a newly initialized Server instance.
+func NewServer(s solver.Solver) *Server {
 	return &Server{
-		debug:   debug,
 		handler: NewHandler(s)}
 }
 

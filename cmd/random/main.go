@@ -8,6 +8,6 @@ import (
 // main program loop
 func main() {
 	solver := random.NewRandomSolver()
-	server := handler.NewServer(false, solver)
+	server := handler.NewServer(solver)
 	server.ServeForever()
 }

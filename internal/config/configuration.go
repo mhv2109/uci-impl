@@ -2,9 +2,12 @@ package config
 
 import "sync"
 
+// Configuration interface is similar in behavior to that of a map, and, in fact,
+// that's exactly what the default interface is: a thread-safe wrapper around a
+// map.
 type Configuration interface {
-	Get(string) *string
-	Set(string, string)
+	Get(string) *string // get the value of a Configuration parameter, returning nil if not set
+	Set(string, string) // set the value of a Configuration parameter
 }
 
 type configurationImpl struct {
@@ -12,6 +15,8 @@ type configurationImpl struct {
 	rwMutex *sync.RWMutex
 }
 
+// NewConfiguration returns a newly inititalize implementation of Configuration
+// interface.
 func NewConfiguration() Configuration {
 	return &configurationImpl{
 		make(map[string]*string),
