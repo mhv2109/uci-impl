@@ -9,6 +9,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOINSTALL=$(GOCMD) mod download
+GODOC=$(GOSETTINGS) godoc
 
 # Configure project
 CMDDIR=$(GOBASE)/cmd
@@ -47,3 +48,8 @@ test: build-mocks
 install:
 	@echo "  >  Installing dependencies..."
 	$(GOINSTALL)
+
+.PHONY: doc
+doc:
+	@echo "  >  Running godoc..."
+	$(GODOC)
