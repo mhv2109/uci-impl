@@ -3,7 +3,8 @@ package solver
 import (
 	"fmt"
 	"strings"
-	"uci-impl/internal/config"
+
+	"github.com/mhv2109/uci-impl/internal/config"
 )
 
 // Options is an alias for Configuration.

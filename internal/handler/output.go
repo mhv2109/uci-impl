@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"uci-impl/internal/handler/info"
-	"uci-impl/internal/solver"
+	"github.com/mhv2109/uci-impl/internal/handler/info"
+	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
 // Emitter interface defines all the message signatures that are sent from the

@@ -1,4 +1,4 @@
-module uci-impl
+module github.com/mhv2109/uci-impl
 
 go 1.14
 

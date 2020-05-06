@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"uci-impl/internal/solver"
+	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
 // Server continuously reads from stdin and submits commands to the Handler.

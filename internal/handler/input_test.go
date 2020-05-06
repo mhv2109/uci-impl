@@ -5,9 +5,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	mh "uci-impl/internal/handler/mock"
-	s "uci-impl/internal/solver"
-	ms "uci-impl/internal/solver/mock"
+	mh "github.com/mhv2109/uci-impl/internal/handler/mock"
+	s "github.com/mhv2109/uci-impl/internal/solver"
+	ms "github.com/mhv2109/uci-impl/internal/solver/mock"
 )
 
 func NewMocks(t *testing.T) (*ms.MockSolver, *mh.MockEmitter, *gomock.Controller) {

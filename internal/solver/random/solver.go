@@ -7,7 +7,7 @@ import (
 
 	"github.com/notnil/chess"
 
-	"uci-impl/internal/solver"
+	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
 type RandomSolver struct {

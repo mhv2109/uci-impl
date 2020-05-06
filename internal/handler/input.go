@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"uci-impl/internal/config"
-	"uci-impl/internal/solver"
+	"github.com/mhv2109/uci-impl/internal/config"
+	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
 // UCIInputHandler is responsible for processing commands from the GUI, and

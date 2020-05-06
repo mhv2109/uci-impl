@@ -6,8 +6,8 @@ package mock
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	solver "github.com/mhv2109/uci-impl/internal/solver"
 	reflect "reflect"
-	solver "uci-impl/internal/solver"
 )
 
 // MockSolver is a mock of Solver interface

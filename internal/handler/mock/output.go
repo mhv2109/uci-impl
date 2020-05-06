@@ -6,9 +6,9 @@ package mock
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	info "github.com/mhv2109/uci-impl/internal/handler/info"
+	solver "github.com/mhv2109/uci-impl/internal/solver"
 	reflect "reflect"
-	info "uci-impl/internal/handler/info"
-	solver "uci-impl/internal/solver"
 )
 
 // MockEmitter is a mock of Emitter interface

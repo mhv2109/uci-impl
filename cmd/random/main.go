@@ -1,8 +1,8 @@
 package main
 
 import (
-	"uci-impl/internal/handler"
-	"uci-impl/internal/solver/random"
+	"github.com/mhv2109/uci-impl/internal/handler"
+	"github.com/mhv2109/uci-impl/internal/solver/random"
 )
 
 // main program loop
