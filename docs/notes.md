@@ -22,6 +22,7 @@ Another Go chess library found [here](https://github.com/dylhunn/dragontoothmg).
 * [golang-standards/project-layout](https://github.com/golang-standards/project-layout)
 * [go-makefile-example](https://github.com/azer/go-makefile-example)
 * [OpenChess Forum](https://www.open-chess.org/index.php)
+* [Crafty chess engine](http://craftychess.com/)
 
 ## Notes
 ### Ponderhit Example
