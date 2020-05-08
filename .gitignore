@@ -16,3 +16,8 @@ vendor/
 
 # Output directory
 bin/
+
+.vscode/
+
+# Profiling output
+*.prof

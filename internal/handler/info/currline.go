@@ -7,11 +7,11 @@ import (
 
 // currline is the current line the engine is calculating.
 type currline struct {
-	cpunr uint // the number of the cpu if the engine is running on more than one cpu
+	cpunr int // the number of the cpu if the engine is running on more than one cpu
 	moves []string
 }
 
-func newCurrline(cpunr uint, moves ...string) *currline {
+func newCurrline(cpunr int, moves ...string) *currline {
 	return &currline{cpunr, moves}
 }
 

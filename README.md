@@ -12,6 +12,9 @@ move at random.
 * Make
 
 ### Building
+Download dependencies using the [vend](https://github.com/nomad-software/vend)
+tool to get CGo dependencies.
+
 Run `make all` to build & run tests. The output binary
 can be found in `bin/` as `mhv2109-uci-random`.
 
