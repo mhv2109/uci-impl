@@ -25,6 +25,9 @@ Another Go chess library found [here](https://github.com/dylhunn/dragontoothmg).
 * [Crafty chess engine](http://craftychess.com/)
 
 ## Notes
+### Resources
+* [Iterative Deepening](https://www.chessprogramming.org/Iterative_Deepening)
+
 ### Ponderhit Example
 ```
 gui -> engine: position p1 [initial position]
@@ -52,4 +55,8 @@ gui -> engine: stop [engine stops searching]
 gui <- engine: bestmove m1 ponder m2 [this is discarded by gui -]
 gui -> engine: position p1 moves a2a3 b7b6... [- because engine2 played a different move]
 gui -> engine: go...
+```
+### Arena 'go' Example
+```
+go wtime 300000 btime 300000 winc 0 binc 0
 ```

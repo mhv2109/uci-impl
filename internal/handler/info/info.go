@@ -7,18 +7,18 @@ import (
 
 // Info is a struct that holds data to be sent to the GUI.
 type Info struct {
-	depth *uint // search depth in plies
+	depth *int // search depth in plies
 	// selective search depth in plies,
 	// if the engine sends seldepth there must also be a "depth" present in the same string.
-	seldepth       *uint
-	time           *uint    // the time searched in ms, this should be sent together with the pv.
-	nodes          *uint    // x nodes searched, the engine should send this info regularly
-	currmovenumber *uint    // currently searching move number x, for the first move x should be 1 not 0.
-	hashfull       *uint    // the hash is x permill full, the engine should send this info regularly
-	nps            *uint    // x nodes per second searched, the engine should send this info regularl
-	tbhits         *uint    // x positions where found in the endgame table bases
-	sbhits         *uint    // x positions where found in the shredder endgame databases
-	cpuload        *uint    // the cpu usage of the engine is x permill.
+	seldepth       *int
+	time           *int     // the time searched in ms, this should be sent together with the pv.
+	nodes          *int     // x nodes searched, the engine should send this info regularly
+	currmovenumber *int     // currently searching move number x, for the first move x should be 1 not 0.
+	hashfull       *int     // the hash is x permill full, the engine should send this info regularly
+	nps            *int     // x nodes per second searched, the engine should send this info regularl
+	tbhits         *int     // x positions where found in the endgame table bases
+	sbhits         *int     // x positions where found in the shredder endgame databases
+	cpuload        *int     // the cpu usage of the engine is x permill.
 	pv             []string // the best line found
 	score          *score
 	currmove       *string // currently searching this move
@@ -37,43 +37,43 @@ func NewInfo() *Info {
 	return &Info{}
 }
 
-func (i *Info) SetDepth(depth uint) {
+func (i *Info) SetDepth(depth int) {
 	i.depth = &depth
 }
 
-func (i *Info) SetSeldepth(seldepth uint) {
+func (i *Info) SetSeldepth(seldepth int) {
 	i.seldepth = &seldepth
 }
 
-func (i *Info) SetTime(time uint) {
+func (i *Info) SetTime(time int) {
 	i.time = &time
 }
 
-func (i *Info) SetNodes(nodes uint) {
+func (i *Info) SetNodes(nodes int) {
 	i.nodes = &nodes
 }
 
-func (i *Info) SetCurrmovenumber(currmovenumber uint) {
+func (i *Info) SetCurrmovenumber(currmovenumber int) {
 	i.currmovenumber = &currmovenumber
 }
 
-func (i *Info) SetHashfull(hashfull uint) {
+func (i *Info) SetHashfull(hashfull int) {
 	i.hashfull = &hashfull
 }
 
-func (i *Info) SetNps(nps uint) {
+func (i *Info) SetNps(nps int) {
 	i.nps = &nps
 }
 
-func (i *Info) SetTbhits(tbhits uint) {
+func (i *Info) SetTbhits(tbhits int) {
 	i.tbhits = &tbhits
 }
 
-func (i *Info) SetSbhits(sbhits uint) {
+func (i *Info) SetSbhits(sbhits int) {
 	i.sbhits = &sbhits
 }
 
-func (i *Info) SetCpuload(cpuload uint) {
+func (i *Info) SetCpuload(cpuload int) {
 	i.cpuload = &cpuload
 }
 
@@ -101,7 +101,7 @@ func (i *Info) AddRefutation(r string) {
 	i.refutation = append(i.refutation, r)
 }
 
-func (i *Info) SetCurrline(cpunr uint, moves ...string) {
+func (i *Info) SetCurrline(cpunr int, moves ...string) {
 	i.currline = newCurrline(cpunr, moves...)
 }
 
