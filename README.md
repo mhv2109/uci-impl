@@ -8,7 +8,7 @@ move at random.
 
 ## Installing
 ### Prerequisites
-* Go v1.4
+* Go v1.14
 * Make
 
 ### Building

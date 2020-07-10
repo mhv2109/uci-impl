@@ -121,15 +121,7 @@ func TestTakePawnSelected(t *testing.T) {
 		return true
 	}
 
-	// Debug the scoring/selection process
-	// fpath := "../../../output/graphviz/TestTakePawnSelected.svg"
-	// graph := test.NewGraph(fpath, graphviz.SVG)
-
 	minimax := newMinimaxAlgo(3, 128, submit, emitter)
-	// Add callbacks for debugging graph
-	// minimax.AddSearchStaretedCallback(graph.SearchStartedCallback)
-	// minimax.AddCurrentMoveCallback(graph.CurrentMoveCallback)
-	// minimax.AddSearchFinishedCallback(graph.SearchFinishedCallback)
 
 	minimax.Start(game.Position())
 
