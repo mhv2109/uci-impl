@@ -68,49 +68,64 @@ func TestInfoToStringCpuload(t *testing.T) {
 }
 
 func TestInfoToStringPv(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	info := NewInfo()
 	for _, pv := range []string{"e4", "Nf3", "Bb5"} {
 		info.AddPv(pv)
 	}
-	if a, e := info.String(), "info pv e4 Nf3 Bb5"; a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
+
+	a, e := info.String(), "info pv e4 Nf3 Bb5"
+	g.Expect(a).
+		To(Equal(e))
 }
 
 func TestInfoToStringScore(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	for i, st := range []ScoreType{CP, Mate, Lowerbound, Upperbound} {
 		info := NewInfo()
 		info.SetScore(st, i)
-		if a, e := info.String(), fmt.Sprintf("info score %s %d", st, i); a != e {
-			t.Errorf("score.String() Expected: %s, Actual: %s", e, a)
-		}
+
+		a, e := info.String(), fmt.Sprintf("info score %s %d", st, i)
+		g.Expect(a).
+			To(Equal(e))
 	}
 }
 
 func TestInfoToStringCurrmove(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	info := NewInfo()
 	info.SetCurrmove("Nf3")
-	if a, e := info.String(), "info currmove Nf3"; a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
+
+	a, e := info.String(), "info currmove Nf3"
+	g.Expect(a).
+		To(Equal(e))
 }
 
 func TestInfoToStringRefutations(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	info := NewInfo()
 	for _, pv := range []string{"e4", "Nf3", "Bb5"} {
 		info.AddRefutation(pv)
 	}
-	if a, e := info.String(), "info refutation e4 Nf3 Bb5"; a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
+
+	a, e := info.String(), "info refutation e4 Nf3 Bb5"
+	g.Expect(a).
+		To(Equal(e))
 }
 
 func TestInfoToStringCurrline(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	info := NewInfo()
 	info.SetCurrline(1, "e4", "Nf3", "Bb5")
-	if s, e := info.String(), "info currline 1 e4 Nf3 Bb5"; s != e {
-		t.Errorf("currline.String() Expected: %s, Actual: %s", e, s)
-	}
+
+	s, e := info.String(), "info currline 1 e4 Nf3 Bb5"
+	g.Expect(s).
+		To(Equal(e))
 }
 
 func testUint(t *testing.T, name string, value uint, info *Info) {
