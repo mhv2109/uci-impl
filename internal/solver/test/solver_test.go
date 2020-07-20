@@ -1,8 +1,15 @@
 package solver
 
-import "testing"
+import (
+	"testing"
+
+	. "github.com/mhv2109/uci-impl/internal/solver"
+	. "github.com/onsi/gomega"
+)
 
 func TestSpinOptionToString(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	option := Option{}
 	option.Name = "testoption"
 	option.Type = OptionSpinType
@@ -10,20 +17,18 @@ func TestSpinOptionToString(t *testing.T) {
 	option.Min = "0"
 	option.Max = "100"
 
-	if a, e := option.String(),
-		"option name testoption type spin default 50 min 0 max 100"; a != e {
-		t.Errorf("Option.String() Expected: %s, Actual: %s", e, a)
-	}
+	g.Expect(option.String()).
+		To(Equal("option name testoption type spin default 50 min 0 max 100"))
 }
 
 func TestStringOptionToString(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	option := Option{}
 	option.Name = "testoption"
 	option.Type = OptionStringType
 	option.Default = "testdefault"
 
-	if a, e := option.String(),
-		"option name testoption type string default testdefault"; a != e {
-		t.Errorf("Option.String() Expected: %s, Actual: %s", e, a)
-	}
+	g.Expect(option.String()).
+		To(Equal("option name testoption type string default testdefault"))
 }

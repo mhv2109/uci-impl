@@ -8,7 +8,7 @@ GOBUILD=$(GOCMD) build -gcflags=-m
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test -gcflags=-m
 GOGET=$(GOCMD) get
-GOINSTALL=$(GOCMD) mod download
+GOINSTALL=$(GOCMD) mod vendor
 GODOC=$(GOSETTINGS) godoc
 
 # Configure project
@@ -43,8 +43,7 @@ clean:
 .PHONY: build-mocks
 build-mocks:
 	@echo " > Building mocks..."
-	mockgen -source=internal/solver/solver.go -destination=internal/solver/mock/solver.go -package=mock
-	mockgen -source=internal/handler/output.go -destination=internal/handler/mock/output.go -package=mock
+	$(GOCMD) generate ./...
 
 .PHONY: test
 test: build-mocks

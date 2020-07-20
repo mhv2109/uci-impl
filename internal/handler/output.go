@@ -8,6 +8,8 @@ import (
 	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Emitter
+
 // Emitter interface defines all the message signatures that are sent from the
 // engine to the GUI.  The interface has been defined separate from the
 // implementation to facilitate mocking during testing.

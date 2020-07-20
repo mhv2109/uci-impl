@@ -3,23 +3,9 @@ package info
 import (
 	"fmt"
 	"testing"
+
+	. "github.com/onsi/gomega"
 )
-
-func TestCurrlineToString(t *testing.T) {
-	c := newCurrline(1, "e4", "Nf3", "Bb5")
-	if s, e := c.String(), "currline 1 e4 Nf3 Bb5"; s != e {
-		t.Errorf("currline.String() Expected: %s, Actual: %s", e, s)
-	}
-}
-
-func TestScoreToString(t *testing.T) {
-	for i, st := range []ScoreType{CP, Mate, Lowerbound, Upperbound} {
-		s := newScore(st, i)
-		if a, e := s.String(), fmt.Sprintf("score %s %d", st, i); a != e {
-			t.Errorf("score.String() Expected: %s, Actual: %s", e, a)
-		}
-	}
-}
 
 func TestInfoToStringDepth(t *testing.T) {
 	info := NewInfo()
@@ -128,7 +114,6 @@ func TestInfoToStringCurrline(t *testing.T) {
 }
 
 func testUint(t *testing.T, name string, value uint, info *Info) {
-	if a, e := info.String(), fmt.Sprintf("info %s %d", name, value); a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
+	NewGomegaWithT(t).Expect(info.String()).
+		To(Equal(fmt.Sprintf("info %s %d", name, value)))
 }

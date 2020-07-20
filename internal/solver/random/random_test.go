@@ -4,68 +4,61 @@ import (
 	"testing"
 
 	"github.com/mhv2109/uci-impl/internal/solver"
+	. "github.com/onsi/gomega"
 )
 
 func TestOnlySelectedMovesReturned(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	sp := solver.NewSearchParams()
 	moves := []string{"e2e4", "g1f3"}
 	randomSolver := NewRandomSolver()
 
 	for i := 0; i < 10; i++ {
 		result := <-randomSolver.StartSearch(sp, moves...)
-		if len(result) == 0 {
-			t.Fail()
-		} else if !contains(moves, result[0]) {
-			t.Fail()
-		}
-	}
-}
 
-func contains(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
+		g.Expect(result).
+			ToNot(HaveLen(0))
+		g.Expect(moves).
+			To(ContainElement(result[0]))
 	}
-	return false
 }
 
 func TestPonderHit(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	sp := &solver.SearchParams{Ponder: true}
 	moves := []string{"e2e4", "g1f3"}
 	randomSolver := NewRandomSolver()
 
 	for i := 0; i < 10; i++ {
 		ch := randomSolver.StartSearch(sp, moves...)
-		if len(ch) != 0 {
-			t.Fail()
-		}
+		g.Expect(ch).
+			To(HaveLen(0))
 
 		randomSolver.PonderHit()
-		if len(ch) != 1 {
-			t.Fail()
-		}
+		g.Expect(ch).
+			To(HaveLen(1))
 
 		result := <-ch
-		if !contains(moves, result[0]) {
-			t.Fail()
-		}
+		g.Expect(moves).
+			To(ContainElement(result[0]))
 	}
 }
 
 func TestPonderMiss(t *testing.T) {
+	g := NewGomegaWithT(t)
+
 	sp := solver.NewSearchParams()
 	sp.Ponder = true
 
 	randomSolver := NewRandomSolver()
 
 	ch := randomSolver.StartSearch(sp)
-	if len(ch) != 0 {
-		t.Fail()
-	}
+	g.Expect(ch).
+		To(HaveLen(0))
 
 	randomSolver.StopSearch()
-	if len(ch) != 0 {
-		t.Fail()
-	}
+	g.Expect(ch).
+		To(HaveLen(0))
 }
