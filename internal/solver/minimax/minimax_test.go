@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/notnil/chess"
+	. "github.com/onsi/gomega"
 
 	hf "github.com/mhv2109/uci-impl/internal/handler/handlerfakes"
 	"github.com/mhv2109/uci-impl/internal/solver"
-	. "github.com/onsi/gomega"
 )
 
 func TestMinimaxSolverReturnsResults(t *testing.T) {

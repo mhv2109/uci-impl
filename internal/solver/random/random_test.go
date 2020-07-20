@@ -3,8 +3,9 @@ package random
 import (
 	"testing"
 
-	"github.com/mhv2109/uci-impl/internal/solver"
 	. "github.com/onsi/gomega"
+
+	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
 func TestOnlySelectedMovesReturned(t *testing.T) {
