@@ -1,65 +1,65 @@
-package random
+package random_test
 
 import (
-	"testing"
-
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"github.com/mhv2109/uci-impl/internal/solver"
+	"github.com/mhv2109/uci-impl/internal/solver/random"
 )
 
-func TestOnlySelectedMovesReturned(t *testing.T) {
-	g := NewGomegaWithT(t)
+var _ = Describe("RandomSolver", func() {
+	var (
+		sp           *solver.SearchParams
+		randomSolver solver.Solver
+	)
 
-	sp := solver.NewSearchParams()
-	moves := []string{"e2e4", "g1f3"}
-	randomSolver := NewRandomSolver()
+	BeforeEach(func() {
+		sp = solver.NewSearchParams()
+		randomSolver = random.NewRandomSolver()
+	})
 
-	for i := 0; i < 10; i++ {
-		result := <-randomSolver.StartSearch(sp, moves...)
+	It("Only returs selected moves", func() {
+		moves := []string{"e2e4", "g1f3"}
 
-		g.Expect(result).
-			ToNot(HaveLen(0))
-		g.Expect(moves).
-			To(ContainElement(result[0]))
-	}
-}
+		for i := 0; i < 10; i++ {
+			result := <-randomSolver.StartSearch(sp, moves...)
 
-func TestPonderHit(t *testing.T) {
-	g := NewGomegaWithT(t)
+			Expect(result).
+				ToNot(HaveLen(0))
+			Expect(moves).
+				To(ContainElement(result[0]))
+		}
+	})
 
-	sp := &solver.SearchParams{Ponder: true}
-	moves := []string{"e2e4", "g1f3"}
-	randomSolver := NewRandomSolver()
+	It("Returns move when ponder hit", func() {
+		sp.Ponder = true
+		moves := []string{"e2e4", "g1f3"}
 
-	for i := 0; i < 10; i++ {
-		ch := randomSolver.StartSearch(sp, moves...)
-		g.Expect(ch).
+		for i := 0; i < 10; i++ {
+			ch := randomSolver.StartSearch(sp, moves...)
+			Expect(ch).
+				To(HaveLen(0))
+
+			randomSolver.PonderHit()
+			Expect(ch).
+				To(HaveLen(1))
+
+			result := <-ch
+			Expect(moves).
+				To(ContainElement(result[0]))
+		}
+	})
+
+	It("Doesn't return move when ponder miss", func() {
+		sp.Ponder = true
+
+		ch := randomSolver.StartSearch(sp)
+		Expect(ch).
 			To(HaveLen(0))
 
-		randomSolver.PonderHit()
-		g.Expect(ch).
-			To(HaveLen(1))
-
-		result := <-ch
-		g.Expect(moves).
-			To(ContainElement(result[0]))
-	}
-}
-
-func TestPonderMiss(t *testing.T) {
-	g := NewGomegaWithT(t)
-
-	sp := solver.NewSearchParams()
-	sp.Ponder = true
-
-	randomSolver := NewRandomSolver()
-
-	ch := randomSolver.StartSearch(sp)
-	g.Expect(ch).
-		To(HaveLen(0))
-
-	randomSolver.StopSearch()
-	g.Expect(ch).
-		To(HaveLen(0))
-}
+		randomSolver.StopSearch()
+		Expect(ch).
+			To(HaveLen(0))
+	})
+})

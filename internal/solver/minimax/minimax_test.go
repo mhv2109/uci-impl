@@ -4,100 +4,98 @@ import (
 	"testing"
 
 	"github.com/notnil/chess"
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/mhv2109/uci-impl/internal/handler"
 	hf "github.com/mhv2109/uci-impl/internal/handler/handlerfakes"
 	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
-func TestMinimaxSolverReturnsResults(t *testing.T) {
-	g := NewGomegaWithT(t)
+var _ = Describe("MinimaxSolver", func() {
+	var (
+		emitter       handler.Emitter
+		minimaxSolver solver.Solver
+	)
 
-	emitter := &hf.FakeEmitter{}
+	BeforeEach(func() {
+		emitter = &hf.FakeEmitter{}
+		minimaxSolver = NewMinimaxSolverWithEmitter(emitter)
+	})
 
-	sp := solver.NewSearchParams()
-	sp.Wtime = 300000
-	sp.Btime = 300000
-	minimaxSolver := NewMinimaxSolverWithEmitter(emitter)
+	It("Returns results", func() {
+		sp := solver.NewSearchParams()
+		sp.Wtime = 300000
+		sp.Btime = 300000
 
-	ch := minimaxSolver.StartSearch(sp)
-	g.Eventually(ch).
-		Should(Receive())
-}
+		ch := minimaxSolver.StartSearch(sp)
+		Eventually(ch).
+			Should(Receive())
+	})
+})
 
-func TestMinimaxCallsSubmit(t *testing.T) {
-	g := NewGomegaWithT(t)
+var _ = Describe("MinimaxAlgo", func() {
+	var (
+		emitter   handler.Emitter
+		called    bool
+		submitted [][]string
+	)
 
-	emitter := &hf.FakeEmitter{}
-	game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
+	BeforeEach(func() {
+		called = false
+		submitted = make([][]string, 0)
+		emitter = &hf.FakeEmitter{}
+	})
 
-	called := false
 	submit := func(move []string) bool {
 		called = true
-		return true
-	}
-
-	minimax := newMinimaxAlgo(1, 32, submit, emitter)
-	minimax.Start(game.Position())
-
-	g.Expect(called).
-		To(BeTrue())
-
-	if !called {
-		t.Fail()
-	}
-}
-
-func TestOnlyValidMovesSubmitted(t *testing.T) {
-	g := NewGomegaWithT(t)
-
-	emitter := &hf.FakeEmitter{}
-	game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
-
-	expected := len(game.ValidMoves())
-	valid := make([]string, 0, expected)
-	for _, move := range game.ValidMoves() {
-		valid = append(valid, move.String())
-	}
-
-	submitted := make([][]string, 0, expected)
-	submit := func(move []string) bool {
 		submitted = append(submitted, move)
 		return true
 	}
 
-	minimax := newMinimaxAlgo(1, 32, submit, emitter)
-	minimax.Start(game.Position())
+	It("Calls submit", func() {
+		game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
 
-	actual := len(submitted)
-	g.Expect(actual > expected).
-		To(BeFalse(), "Actual %d > Expected %d", actual, expected)
-	for _, move := range submitted {
-		g.Expect(valid).
-			To(ContainElement(move[0]))
-	}
-}
+		algo := newMinimaxAlgo(1, 32, submit, emitter)
+		algo.Start(game.Position())
 
-func TestTakePawnSelected(t *testing.T) {
-	g := NewGomegaWithT(t)
+		Expect(called).
+			To(BeTrue())
+	})
 
-	emitter := &hf.FakeEmitter{}
-	fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
-	game := chess.NewGame(fen, chess.UseNotation(chess.LongAlgebraicNotation{}))
+	It("Solver only submits valid moves", func() {
+		game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
 
-	submitted := make([][]string, 0, len(game.ValidMoves()))
-	submit := func(move []string) bool {
-		submitted = append(submitted, move)
-		return true
-	}
+		expected := len(game.ValidMoves())
+		valid := make([]string, 0, expected)
+		for _, move := range game.ValidMoves() {
+			valid = append(valid, move.String())
+		}
 
-	minimax := newMinimaxAlgo(3, 128, submit, emitter)
+		algo := newMinimaxAlgo(1, 32, submit, emitter)
+		algo.Start(game.Position())
 
-	minimax.Start(game.Position())
+		actual := len(submitted)
+		Expect(actual > expected).
+			To(BeFalse(), "Actual %d > Expected %d", actual, expected)
+		for _, move := range submitted {
+			Expect(valid).
+				To(ContainElement(move[0]))
+		}
+	})
 
-	best := submitted[len(submitted)-1]
-	g.Expect(best[0]).To(Equal("h6g5"))
-}
+	It("Takes Pawn", func() {
+		fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
+		game := chess.NewGame(fen, chess.UseNotation(chess.LongAlgebraicNotation{}))
+
+		algo := newMinimaxAlgo(3, 128, submit, emitter)
+		algo.Start(game.Position())
+
+		best := submitted[len(submitted)-1]
+		Expect(best[0]).To(Equal("h6g5"))
+	})
+
+})
 
 func BenchmarkTakePawnSelected(b *testing.B) {
 	emitter := &hf.FakeEmitter{}
