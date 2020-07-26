@@ -2,133 +2,129 @@ package info
 
 import (
 	"fmt"
-	"testing"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestCurrlineToString(t *testing.T) {
-	c := newCurrline(1, "e4", "Nf3", "Bb5")
-	if s, e := c.String(), "currline 1 e4 Nf3 Bb5"; s != e {
-		t.Errorf("currline.String() Expected: %s, Actual: %s", e, s)
-	}
-}
+var _ = Describe("Info", func() {
+	var info *Info
 
-func TestScoreToString(t *testing.T) {
-	for i, st := range []ScoreType{CP, Mate, Lowerbound, Upperbound} {
-		s := newScore(st, i)
-		if a, e := s.String(), fmt.Sprintf("score %s %d", st, i); a != e {
-			t.Errorf("score.String() Expected: %s, Actual: %s", e, a)
+	BeforeEach(func() {
+		info = NewInfo()
+	})
+
+	testUint := func(name string, value uint, info *Info) {
+		Expect(info.String()).
+			To(Equal(fmt.Sprintf("info %s %d", name, value)))
+	}
+
+	var _ = Describe("uint", func() {
+		It("depth", func() {
+			info.SetDepth(99)
+			testUint("depth", 99, info)
+		})
+
+		It("seldepth", func() {
+			info.SetSeldepth(99)
+			testUint("seldepth", 99, info)
+		})
+
+		It("time", func() {
+			info.SetTime(99)
+			testUint("time", 99, info)
+		})
+
+		It("nodes", func() {
+			info.SetNodes(99)
+			testUint("nodes", 99, info)
+		})
+
+		It("currmovenumber", func() {
+			info.SetCurrmovenumber(99)
+			testUint("currmovenumber", 99, info)
+		})
+
+		It("hashfull", func() {
+			info.SetHashfull(99)
+			testUint("hashfull", 99, info)
+		})
+
+		It("nps", func() {
+			info.SetNps(99)
+			testUint("nps", 99, info)
+		})
+
+		It("tbhits", func() {
+			info.SetTbhits(99)
+			testUint("tbhits", 99, info)
+		})
+
+		It("sbhits", func() {
+			info.SetSbhits(99)
+			testUint("sbhits", 99, info)
+		})
+
+		It("cpuload", func() {
+			info.SetCpuload(99)
+			testUint("cpuload", 99, info)
+		})
+	})
+
+	It("pv", func() {
+		for _, pv := range []string{"e4", "Nf3", "Bb5"} {
+			info.AddPv(pv)
 		}
-	}
-}
 
-func TestInfoToStringDepth(t *testing.T) {
-	info := NewInfo()
-	info.SetDepth(99)
-	testUint(t, "depth", 99, info)
-}
+		a, e := info.String(), "info pv e4 Nf3 Bb5"
+		Expect(a).
+			To(Equal(e))
+	})
 
-func TestInfoToStringSeldepth(t *testing.T) {
-	info := NewInfo()
-	info.SetSeldepth(99)
-	testUint(t, "seldepth", 99, info)
-}
+	Describe("score", func() {
+		var st ScoreType
+		sts := []ScoreType{CP, Mate, Lowerbound, Upperbound}
+		i := 0
 
-func TestInfoToStringTime(t *testing.T) {
-	info := NewInfo()
-	info.SetTime(99)
-	testUint(t, "time", 99, info)
-}
+		BeforeEach(func() {
+			st = sts[i]
+			info.SetScore(st, i)
+		})
 
-func TestInfoToStringNodes(t *testing.T) {
-	info := NewInfo()
-	info.SetNodes(99)
-	testUint(t, "nodes", 99, info)
-}
+		AfterEach(func() {
+			i++
+		})
 
-func TestInfoToStringCurrmovenumber(t *testing.T) {
-	info := NewInfo()
-	info.SetCurrmovenumber(99)
-	testUint(t, "currmovenumber", 99, info)
-}
+		It("Score serializes", func() {
+			a, e := info.String(), fmt.Sprintf("info score %s %d", st, i)
+			Expect(a).
+				To(Equal(e))
+		})
+	})
 
-func TestInfoToStringHashfull(t *testing.T) {
-	info := NewInfo()
-	info.SetHashfull(99)
-	testUint(t, "hashfull", 99, info)
-}
+	It("currmove", func() {
+		info.SetCurrmove("Nf3")
 
-func TestInfoToStringNps(t *testing.T) {
-	info := NewInfo()
-	info.SetNps(99)
-	testUint(t, "nps", 99, info)
-}
+		a, e := info.String(), "info currmove Nf3"
+		Expect(a).
+			To(Equal(e))
+	})
 
-func TestInfoToStringTbhits(t *testing.T) {
-	info := NewInfo()
-	info.SetTbhits(99)
-	testUint(t, "tbhits", 99, info)
-}
-
-func TestInfoToStringSbhits(t *testing.T) {
-	info := NewInfo()
-	info.SetSbhits(99)
-	testUint(t, "sbhits", 99, info)
-}
-
-func TestInfoToStringCpuload(t *testing.T) {
-	info := NewInfo()
-	info.SetCpuload(99)
-	testUint(t, "cpuload", 99, info)
-}
-
-func TestInfoToStringPv(t *testing.T) {
-	info := NewInfo()
-	for _, pv := range []string{"e4", "Nf3", "Bb5"} {
-		info.AddPv(pv)
-	}
-	if a, e := info.String(), "info pv e4 Nf3 Bb5"; a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
-}
-
-func TestInfoToStringScore(t *testing.T) {
-	for i, st := range []ScoreType{CP, Mate, Lowerbound, Upperbound} {
-		info := NewInfo()
-		info.SetScore(st, i)
-		if a, e := info.String(), fmt.Sprintf("info score %s %d", st, i); a != e {
-			t.Errorf("score.String() Expected: %s, Actual: %s", e, a)
+	It("refutation", func() {
+		for _, pv := range []string{"e4", "Nf3", "Bb5"} {
+			info.AddRefutation(pv)
 		}
-	}
-}
 
-func TestInfoToStringCurrmove(t *testing.T) {
-	info := NewInfo()
-	info.SetCurrmove("Nf3")
-	if a, e := info.String(), "info currmove Nf3"; a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
-}
+		a, e := info.String(), "info refutation e4 Nf3 Bb5"
+		Expect(a).
+			To(Equal(e))
+	})
 
-func TestInfoToStringRefutations(t *testing.T) {
-	info := NewInfo()
-	for _, pv := range []string{"e4", "Nf3", "Bb5"} {
-		info.AddRefutation(pv)
-	}
-	if a, e := info.String(), "info refutation e4 Nf3 Bb5"; a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
-}
+	It("currline", func() {
+		info.SetCurrline(1, "e4", "Nf3", "Bb5")
 
-func TestInfoToStringCurrline(t *testing.T) {
-	info := NewInfo()
-	info.SetCurrline(1, "e4", "Nf3", "Bb5")
-	if s, e := info.String(), "info currline 1 e4 Nf3 Bb5"; s != e {
-		t.Errorf("currline.String() Expected: %s, Actual: %s", e, s)
-	}
-}
-
-func testUint(t *testing.T, name string, value uint, info *Info) {
-	if a, e := info.String(), fmt.Sprintf("info %s %d", name, value); a != e {
-		t.Errorf("Info.String() Expected: %s, Actual: %s", e, a)
-	}
-}
+		s, e := info.String(), "info currline 1 e4 Nf3 Bb5"
+		Expect(s).
+			To(Equal(e))
+	})
+})

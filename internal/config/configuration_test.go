@@ -1,23 +1,48 @@
-package config
+package config_test
 
-import "testing"
+import (
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 
-func TestSetAndGetKey(t *testing.T) {
-	config := NewConfiguration()
+	c "github.com/mhv2109/uci-impl/internal/config"
+)
 
-	testKey, testVal := "testKey", "testVal"
-	config.Set(testKey, testVal)
+var _ = Describe("Config", func() {
+	var _ = Describe("NewConfiguration", func() {
+		var config c.Configuration
 
-	if ret := config.Get(testKey); *ret != testVal {
-		t.Errorf("config.Get Expected: %s, Actual: %s", testVal, *ret)
-	}
-}
+		BeforeEach(func() {
+			config = c.NewConfiguration()
+		})
 
-func TestGlobalSetAndGet(t *testing.T) {
-	testKey, testVal := "testKey", "testVal"
-	Config.Set(testKey, testVal)
+		var _ = Describe("Setting and Getting key", func() {
+			testKey, testVal := "testKey", "testVal"
 
-	if ret := Config.Get(testKey); *ret != testVal {
-		t.Errorf("config.Get Expected: %s, Actual: %s", testVal, *ret)
-	}
-}
+			BeforeEach(func() {
+				config.Set(testKey, testVal)
+			})
+
+			It("Get key", func() {
+				ret := config.Get(testKey)
+				Expect(*ret).
+					To(Equal(testVal))
+			})
+		})
+	})
+
+	var _ = Describe("Global Configuration", func() {
+		var _ = Describe("Setting and Getting key", func() {
+			testKey, testVal := "testKey", "testVal"
+
+			BeforeEach(func() {
+				c.Config.Set(testKey, testVal)
+			})
+
+			It("Get key", func() {
+				ret := c.Config.Get(testKey)
+				Expect(*ret).
+					To(Equal(testVal))
+			})
+		})
+	})
+})

@@ -1,29 +1,35 @@
-package utils
+package utils_test
 
 import (
-	"testing"
-
 	"github.com/notnil/chess"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+
+	. "github.com/mhv2109/uci-impl/internal/solver/utils"
 )
 
-func TestTakenPawnScore(t *testing.T) {
-	fen, _ := chess.FEN("rnbqkbnr/ppppppp1/8/6p1/8/8/PPPPPP1P/RNBQKBNR w KQkq - 0 3")
-	game := chess.NewGame(fen)
-	board := game.Position().Board()
+var _ = Describe("Score", func() {
+	It("Take pawn", func() {
+		fen, _ := chess.FEN("rnbqkbnr/ppppppp1/8/6p1/8/8/PPPPPP1P/RNBQKBNR w KQkq - 0 3")
+		game := chess.NewGame(fen)
+		board := game.Position().Board()
 
-	if expected, actual := PawnValue, BlackAdvantage(board); expected != actual {
-		t.Errorf("Expected %d, actual %d", expected, actual)
-	} else if inverse := WhiteAdvantage(board); actual != -inverse {
-		t.Errorf("Expected %d, actual %d", -actual, inverse)
-	}
-}
+		expected, actual := PawnValue, BlackAdvantage(board)
+		Expect(actual).
+			To(Equal(expected))
 
-func TestBeforePawnTakenScore(t *testing.T) {
-	fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
-	game := chess.NewGame(fen)
-	board := game.Position().Board()
+		inverse := WhiteAdvantage(board)
+		Expect(actual).
+			To(Equal(-inverse))
+	})
 
-	if expected, actual := CentiPawns(0), BlackAdvantage(board); expected != actual {
-		t.Errorf("Expected %d, actual %d", expected, actual)
-	}
-}
+	It("Before take pawn", func() {
+		fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
+		game := chess.NewGame(fen)
+		board := game.Position().Board()
+
+		expected, actual := CentiPawns(0), BlackAdvantage(board)
+		Expect(actual).
+			To(Equal(expected))
+	})
+})

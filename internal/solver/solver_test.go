@@ -1,29 +1,37 @@
-package solver
+package solver_test
 
-import "testing"
+import (
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 
-func TestSpinOptionToString(t *testing.T) {
-	option := Option{}
-	option.Name = "testoption"
-	option.Type = OptionSpinType
-	option.Default = "50"
-	option.Min = "0"
-	option.Max = "100"
+	. "github.com/mhv2109/uci-impl/internal/solver"
+)
 
-	if a, e := option.String(),
-		"option name testoption type spin default 50 min 0 max 100"; a != e {
-		t.Errorf("Option.String() Expected: %s, Actual: %s", e, a)
-	}
-}
+var _ = Describe("Option", func() {
 
-func TestStringOptionToString(t *testing.T) {
-	option := Option{}
-	option.Name = "testoption"
-	option.Type = OptionStringType
-	option.Default = "testdefault"
+	var option Option
 
-	if a, e := option.String(),
-		"option name testoption type string default testdefault"; a != e {
-		t.Errorf("Option.String() Expected: %s, Actual: %s", e, a)
-	}
-}
+	BeforeEach(func() {
+		option = Option{}
+	})
+
+	It("Spin Option stringifies correctly", func() {
+		option.Name = "testoption"
+		option.Type = OptionSpinType
+		option.Default = "50"
+		option.Min = "0"
+		option.Max = "100"
+
+		Expect(option.String()).
+			To(Equal("option name testoption type spin default 50 min 0 max 100"))
+	})
+
+	It("String Option stringifies correctly", func() {
+		option.Name = "testoption"
+		option.Type = OptionStringType
+		option.Default = "testdefault"
+
+		Expect(option.String()).
+			To(Equal("option name testoption type string default testdefault"))
+	})
+})

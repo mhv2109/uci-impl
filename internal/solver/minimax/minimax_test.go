@@ -2,155 +2,105 @@ package minimax
 
 import (
 	"testing"
-	"time"
 
-	"github.com/golang/mock/gomock"
-	"github.com/mhv2109/uci-impl/internal/handler/mock"
-	"github.com/mhv2109/uci-impl/internal/solver"
 	"github.com/notnil/chess"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+
+	"github.com/mhv2109/uci-impl/internal/handler"
+	hf "github.com/mhv2109/uci-impl/internal/handler/handlerfakes"
+	"github.com/mhv2109/uci-impl/internal/solver"
 )
 
-func TestMinimaxSolverReturnsResults(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	emitter := mock.NewMockEmitter(ctrl)
-	defer ctrl.Finish()
+var _ = Describe("MinimaxSolver", func() {
+	var (
+		emitter       handler.Emitter
+		minimaxSolver solver.Solver
+	)
 
-	emitter.
-		EXPECT().
-		EmitInfo(gomock.Any()).
-		AnyTimes()
+	BeforeEach(func() {
+		emitter = &hf.FakeEmitter{}
+		minimaxSolver = NewMinimaxSolverWithEmitter(emitter)
+	})
 
-	sp := solver.NewSearchParams()
-	sp.Wtime = 300000
-	sp.Btime = 300000
-	minimaxSolver := NewMinimaxSolverWithEmitter(emitter)
+	It("Returns results", func() {
+		sp := solver.NewSearchParams()
+		sp.Wtime = 300000
+		sp.Btime = 300000
 
-	resultCh := minimaxSolver.StartSearch(sp)
-	time.Sleep(1 * time.Second)
-	if len(resultCh) <= 0 {
-		t.Fail()
-	}
-}
+		ch := minimaxSolver.StartSearch(sp)
+		Eventually(ch).
+			Should(Receive())
+	})
+})
 
-func TestMinimaxCallsSubmit(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	emitter := mock.NewMockEmitter(ctrl)
-	defer ctrl.Finish()
-	game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
+var _ = Describe("MinimaxAlgo", func() {
+	var (
+		emitter   handler.Emitter
+		called    bool
+		submitted [][]string
+	)
 
-	emitter.
-		EXPECT().
-		EmitInfo(gomock.Any()).
-		AnyTimes()
+	BeforeEach(func() {
+		called = false
+		submitted = make([][]string, 0)
+		emitter = &hf.FakeEmitter{}
+	})
 
-	called := false
 	submit := func(move []string) bool {
 		called = true
-		return true
-	}
-
-	minimax := newMinimaxAlgo(1, 32, submit, emitter)
-	minimax.Start(game.Position())
-
-	if !called {
-		t.Fail()
-	}
-}
-
-func TestOnlyValidMovesSubmitted(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	emitter := mock.NewMockEmitter(ctrl)
-	defer ctrl.Finish()
-
-	game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
-
-	emitter.
-		EXPECT().
-		EmitInfo(gomock.Any()).
-		AnyTimes()
-
-	expected := len(game.ValidMoves())
-	valid := make([]string, 0, expected)
-	for _, move := range game.ValidMoves() {
-		valid = append(valid, move.String())
-	}
-
-	submitted := make([][]string, 0, expected)
-	submit := func(move []string) bool {
 		submitted = append(submitted, move)
 		return true
 	}
 
-	minimax := newMinimaxAlgo(1, 32, submit, emitter)
-	minimax.Start(game.Position())
+	It("Calls submit", func() {
+		game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
 
-	if actual := len(submitted); actual > expected {
-		t.Errorf("Actual %d > Expected %d", expected, actual)
-	}
-	for _, move := range submitted {
-		m := move[0]
-		found := false
-		for _, vm := range valid {
-			if m == vm {
-				found = true
-				break
-			}
+		algo := newMinimaxAlgo(1, 32, submit, emitter)
+		algo.Start(game.Position())
+
+		Expect(called).
+			To(BeTrue())
+	})
+
+	It("Solver only submits valid moves", func() {
+		game := chess.NewGame(chess.UseNotation(chess.LongAlgebraicNotation{}))
+
+		expected := len(game.ValidMoves())
+		valid := make([]string, 0, expected)
+		for _, move := range game.ValidMoves() {
+			valid = append(valid, move.String())
 		}
-		if !found {
-			t.Errorf("Invalid move: %s", m)
+
+		algo := newMinimaxAlgo(1, 32, submit, emitter)
+		algo.Start(game.Position())
+
+		actual := len(submitted)
+		Expect(actual > expected).
+			To(BeFalse(), "Actual %d > Expected %d", actual, expected)
+		for _, move := range submitted {
+			Expect(valid).
+				To(ContainElement(move[0]))
 		}
-	}
-}
+	})
 
-func TestTakePawnSelected(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	emitter := mock.NewMockEmitter(ctrl)
-	defer ctrl.Finish()
+	It("Takes Pawn", func() {
+		fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
+		game := chess.NewGame(fen, chess.UseNotation(chess.LongAlgebraicNotation{}))
 
-	fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
-	game := chess.NewGame(fen, chess.UseNotation(chess.LongAlgebraicNotation{}))
+		algo := newMinimaxAlgo(3, 128, submit, emitter)
+		algo.Start(game.Position())
 
-	emitter.
-		EXPECT().
-		EmitInfo(gomock.Any()).
-		AnyTimes()
+		best := submitted[len(submitted)-1]
+		Expect(best[0]).To(Equal("h6g5"))
+	})
 
-	submitted := make([][]string, 0, len(game.ValidMoves()))
-	submit := func(move []string) bool {
-		submitted = append(submitted, move)
-		return true
-	}
-
-	// Debug the scoring/selection process
-	// fpath := "../../../output/graphviz/TestTakePawnSelected.svg"
-	// graph := test.NewGraph(fpath, graphviz.SVG)
-
-	minimax := newMinimaxAlgo(3, 128, submit, emitter)
-	// Add callbacks for debugging graph
-	// minimax.AddSearchStaretedCallback(graph.SearchStartedCallback)
-	// minimax.AddCurrentMoveCallback(graph.CurrentMoveCallback)
-	// minimax.AddSearchFinishedCallback(graph.SearchFinishedCallback)
-
-	minimax.Start(game.Position())
-
-	best := submitted[len(submitted)-1]
-	if actual, expected := best[0], "h6g5"; expected != actual {
-		t.Errorf("Expected %s, actual %s", expected, actual)
-	}
-}
+})
 
 func BenchmarkTakePawnSelected(b *testing.B) {
-	ctrl := gomock.NewController(b)
-	emitter := mock.NewMockEmitter(ctrl)
-	defer ctrl.Finish()
-
+	emitter := &hf.FakeEmitter{}
 	fen, _ := chess.FEN("rnbqkbnr/ppppppp1/7p/6P1/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 2")
 	game := chess.NewGame(fen, chess.UseNotation(chess.LongAlgebraicNotation{}))
-
-	emitter.
-		EXPECT().
-		EmitInfo(gomock.Any()).
-		AnyTimes()
 
 	submit := func(move []string) bool {
 		return true
@@ -163,17 +113,9 @@ func BenchmarkTakePawnSelected(b *testing.B) {
 }
 
 func Benchmark2(b *testing.B) {
-	ctrl := gomock.NewController(b)
-	emitter := mock.NewMockEmitter(ctrl)
-	defer ctrl.Finish()
-
+	emitter := &hf.FakeEmitter{}
 	fen, _ := chess.FEN("rnb1k2r/pppp1ppp/5n2/8/P7/R1PP4/1P1K2Pq/1NBQ1BR1 w kq - 0 11")
 	game := chess.NewGame(fen, chess.UseNotation(chess.LongAlgebraicNotation{}))
-
-	emitter.
-		EXPECT().
-		EmitInfo(gomock.Any()).
-		AnyTimes()
 
 	submit := func(move []string) bool {
 		return true

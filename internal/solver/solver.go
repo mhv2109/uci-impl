@@ -41,6 +41,8 @@ func NewSearchParams() *SearchParams {
 		-1, -1, -1, -1, false}
 }
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Solver
+
 // Solver is the interface that must be implemented to be accepted and
 // coordinated by the Handler.
 type Solver interface {
